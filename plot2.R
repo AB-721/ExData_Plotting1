@@ -1,0 +1,30 @@
+
+##This is the function for the 2nd plot of the assignment
+
+plot2 <- function ()
+{
+
+
+## Extract data into a dataset from file, and choose to use only the subset of two days worth of data by greppin for the last appearance of Jan 31st [ which is the day before Feb 1st] - thsi way, the next 2880 lines will have minute by minute data
+##for the first two days of Feb 2007 as the assignment suggests
+##Column names are specified explicitly since they were skipped while reading in the file, since we wanted to read only 2 days worth of data and not the whole big file
+eda <- read.table("household_power_consumption.txt",sep=";",skip=grep("31/1/2007;23:59:00;", readLines("household_power_consumption.txt")),nrows=2880, col.names=c("Date","Time","Global_active_power","Global_reactive_power","Voltage","Global_intensity","Sub_metering_1","Sub_metering_2","Sub_metering_3"), na.strings ="?")
+
+
+##Below, a character string of both date and time values are formed
+eda$DateTime <- paste(eda$Date, eda$Time)
+
+
+##Convert the character object to a datetime format to play against
+eda$NewDate <- as.POSIXct(strptime(eda$DateTime, "%d/%m/%Y %H:%M:%S"))
+
+##Open the graphic device for png
+png(file = "plot2.png")
+
+##Plot for Global Active Power against datetime for the 2 day minute-by-minute consumption
+plot(eda$NewDate,eda$Global_active_power, type='l', ylab = "Global Active Power(Kilowatts)", xlab = "Minute-minute Consumption over two consecutive Days")
+
+##exit the graphic device
+dev.off()
+}
+
